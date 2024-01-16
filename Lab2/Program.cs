@@ -1,4 +1,4 @@
-﻿using System;
+ using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -24,7 +24,7 @@ namespace ListsLab2
             }
             userNumber = Convert.ToInt32(userInput);
 
-            // Create a list  with user inputs
+            // Create a list with user inputs
             List<int> numberList = new List<int>();
             string listInput;
 
@@ -96,6 +96,8 @@ namespace ListsLab2
         /// </summary>
         public void RunProgramThree()
         {
+            List<int> numberList = new List<int>();
+
             try
             {
                 // Obtain input for minimum index
@@ -109,7 +111,8 @@ namespace ListsLab2
                     Console.Write("Please enter a whole number for the minimum index: ");
                     minIndexStr = Console.ReadLine();
                 }
-
+                minIndex = Math.Max(minIndex, 0);
+            
                 minIndex = Convert.ToInt32(minIndexStr);
 
                 // Obtain input for maximum index
@@ -126,7 +129,6 @@ namespace ListsLab2
                 maxIndex = Convert.ToInt32(maxIndexStr);
 
                 // Create a list and add user inputs to the list
-                List<int> numberList = new List<int>();
                 string numberStr;
                 int number;
                 bool isUserDone = false;
@@ -167,6 +169,7 @@ namespace ListsLab2
                 Console.WriteLine($"The length of the list is => {subsetList.Count}");
                 Console.WriteLine($"The sum of values in the list is => {GetSum(subsetList)}");
             }
+
             catch (Exception ex)
             {
                 Console.WriteLine($"An error occurred: {ex.Message}");
@@ -178,7 +181,6 @@ namespace ListsLab2
         /// <summary>
         /// Gets a subset of a list based on user-specified indexes.
         /// </summary>
-       
         public List<int> GetSubsetList(List<int> list, int index1, int index2)
         {
             List<int> tempList = new List<int>();
@@ -194,7 +196,6 @@ namespace ListsLab2
         /// <summary>
         /// Gets the sum of values in a list.
         /// </summary>
-     
         public int GetSum(List<int> list)
         {
             int sum = 0;
@@ -214,148 +215,76 @@ namespace ListsLab2
         {
             try
             {
-                bool isInputValid = false;
-                List<string> inputListStr;
-                List<string> inputListStrDone = null;
-                List<int> inputListNum = new List<int>();
+                // Get the sequence of numbers from the user.
+                Console.WriteLine("Enter sequence of numbers (separated by space): ");
+                string userSequence = Console.ReadLine();
 
-                while (!isInputValid)
+                // Check if the user provided any input.
+                if (string.IsNullOrWhiteSpace(userSequence))
                 {
-                    // Obtain inputs from the user
-                    Console.Write("Enter a sequence of numbers (enter 'done' at the end): ");
-                    string inputStr = Console.ReadLine();
-                    inputListStr = new List<string>();
-                    inputListStrDone = new List<string>();
+                    Console.WriteLine("No input provided. Exiting...");
+                    return;
+                }
 
-                    // Create and update the list to remove 'done'
-                    inputListStr = inputStr.Split(' ').ToList();
-                    inputListStrDone = inputListStr.GetRange(0, inputListStr.Count - 1);
+                // Initialize counters for different types of numbers.
+                int positiveOddNumbers = 0;
+                int positiveEvenNumbers = 0;
+                int negativeOddNumbers = 0;
+                int negativeEvenNumbers = 0;
+                int zeroCount = 0;
 
-                    int num;
+                // Split the user input into an array of strings representing numbers.
+                string[] numbers = userSequence.Split(' ');
 
-                    // Validate input to be integers
-                    if (inputListStrDone.TrueForAll(s => int.TryParse(s, out num))
-                        && inputListStr[inputListStr.Count - 1] == "done")
+                // Iterate through each number in the array and categorize it.
+                foreach (string number in numbers)
+                {
+                    try
                     {
-                        isInputValid = true;
+                        // Convert the string to an integer.
+                        int num = Convert.ToInt32(number);
+
+                        // Categorize the number  
+                        if (num % 2 == 0)
+                        {
+                            if (num > 0)
+                                positiveEvenNumbers++;
+                            else if (num < 0)
+                                negativeEvenNumbers++;
+                        }
+                        else
+                        {
+                            if (num > 0)
+                                positiveOddNumbers++;
+                            else if (num < 0)
+                                negativeOddNumbers++;
+                        }
+
+                        // Check if the number is zero.
+                        if (num == 0)
+                            zeroCount++;
                     }
-                    else
+                    catch (FormatException)
                     {
-                        Console.WriteLine("Please enter only numbers separated by space (end with 'done')");
+                        // Handle the case where the input is not a valid number.
+                        Console.WriteLine($"Invalid Input '{number}'. Please enter a valid number.");
                     }
                 }
 
-                for (int i = 0; i < inputListStrDone.Count; i++)
-                {
-                    inputListNum.Add(Convert.ToInt32(inputListStrDone[i]));
-                }
-
-                // Obtain and print list information
-                GetPositiveEven(inputListNum);
-                GetNegativeEven(inputListNum);
-                GetPositiveOdd(inputListNum);
-                GetNegativeOdd(inputListNum);
-                GetNumberOfZeros(inputListNum);
+                // Display the count of each type of number.
+                Console.WriteLine($"The number of positive odd numbers: {positiveOddNumbers}");
+                Console.WriteLine($"The number of positive even numbers: {positiveEvenNumbers}");
+                Console.WriteLine($"The number of negative odd numbers: {negativeOddNumbers}");
+                Console.WriteLine($"The number of negative even numbers: {negativeEvenNumbers}");
+                Console.WriteLine($"The number of zeros: {zeroCount}");
             }
             catch (Exception ex)
             {
+                // Handle unexpected exceptions.
                 Console.WriteLine($"An error occurred: {ex.Message}");
             }
-
-            Console.ReadKey();
-        }
-
-        /// <summary>
-        /// Gets the number of positive even numbers in a list.
-        /// </summary>
-       
-        public void GetPositiveEven(List<int> list)
-        {
-            int positiveEvenCount = 0;
-
-            foreach (int item in list)
-            {
-                if (item % 2 == 0 && item / 2 > 0)
-                {
-                    positiveEvenCount++;
-                }
-            }
-
-            Console.WriteLine($"Number of positive even numbers => {positiveEvenCount}");
-        }
-
-        /// <summary>
-        /// Gets the number of negative even numbers in a list.
-        /// </summary>
-      
-        public void GetNegativeEven(List<int> list)
-        {
-            int negativeEvenCount = 0;
-
-            foreach (int item in list)
-            {
-                if (item % 2 == 0 && item / 2 < 0)
-                {
-                    negativeEvenCount++;
-                }
-            }
-
-            Console.WriteLine($"Number of negative even numbers => {negativeEvenCount}");
-        }
-
-        /// <summary>
-        /// Gets the number of positive odd numbers in a list.
-        /// </summary> 
-        public void GetPositiveOdd(List<int> list)
-        {
-            int positiveOddCount = 0;
-
-            foreach (int item in list)
-            {
-                if (item % 2 != 0 && item / 2 > 0)
-                {
-                    positiveOddCount++;
-                }
-            }
-
-            Console.WriteLine($"Number of positive odd numbers => {positiveOddCount}");
-        }
-
-        /// <summary>
-        /// Gets the number of negative odd numbers in a list.
-        /// </summary> 
-        public void GetNegativeOdd(List<int> list)
-        {
-            int negativeOddCount = 0;
-
-            foreach (int item in list)
-            {
-                if (item % 2 != 0 && item / 2 < 0)
-                {
-                    negativeOddCount++;
-                }
-            }
-
-            Console.WriteLine($"Number of negative odd numbers => {negativeOddCount}");
-        }
-
-        /// <summary>
-        /// Gets the number of zeros in a list.
-        /// </summary>
-  
-        public void GetNumberOfZeros(List<int> list)
-        {
-            int numberOfZeros = 0;
-
-            foreach (int item in list)
-            {
-                if (item == 0)
-                {
-                    numberOfZeros++;
-                }
-            }
-
-            Console.WriteLine($"Number of zeros: {numberOfZeros}");
         }
     }
 }
+
+    
